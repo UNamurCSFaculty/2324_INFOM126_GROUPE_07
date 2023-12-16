@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+  django:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: django_dev
+    ports:
+      - "8000:8000"
+    environment:
+      - "DJANGO_DEBUG=${DJANGO_DEBUG}"
+      - "DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}"
+      - "DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}"
+    volumes:
+      - ./:/app
