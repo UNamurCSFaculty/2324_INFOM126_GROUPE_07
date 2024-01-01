@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  workflow_call:
+  workflow_dispatch:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  quality-assurance:
+    runs-on: ubuntu-latest
+    env:
+      DJANGO_DEBUG: ${{ secrets.DJANGO_DEBUG }}
+      DJANGO_SECRET_KEY: ${{ secrets.DJANGO_SECRET_KEY }}
+      DJANGO_ALLOWED_HOSTS: ${{ secrets.DJANGO_ALLOWED_HOSTS }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: Setup python environment
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12.1'
+    - name: Check Python version
+      run: python --version
+    - name: Install requirements
+      run: pip install -r requirements.txt
+    - name: Static Code Analysis
+      run: |
+        pip install flake8
+        flake8 .
+    - name: Run Migrations
+      run: python manage.py migrate
+    - name: Run Tests
+      run: python manage.py test
